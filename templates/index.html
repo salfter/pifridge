@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<script type="text/javascript">
+			function GetText(url)
+			{
+				r=new XMLHttpRequest();
+				r.open("GET", url, false);
+				r.send(null)
+				if (r.status!==200)
+					throw new Error(r.statusText);
+				return r.responseText;
+			}
+			
+			function UpdateTemperature()
+			{
+				temp=new Number(GetText("/curr_temp")).toPrecision(3);
+				document.getElementById("curr_temp").innerHTML=temp;
+			}
+			
+			function OnLoad()
+			{
+				UpdateTemperature();
+				window.setInterval(UpdateTemperature, 5000);
+			}
+		</script>
+	</head>
+	<body onload="javascript:OnLoad();">
+		<p>current temperature: <span id="curr_temp"></span>&deg;F</p>
+	</body>
+</html>
