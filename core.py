@@ -4,6 +4,7 @@ import os
 import glob
 import thread
 import time
+from collections import deque
 
 class core:
 
@@ -14,6 +15,9 @@ class core:
     self.temp_device=glob.glob("/sys/bus/w1/devices/28*")[0]+"/w1_slave"
     self.switch_device=glob.glob("/sys/bus/w1/devices/12*")[0]+"/output"
     self.switch_status=glob.glob("/sys/bus/w1/devices/12*")[0]+"/state"
+    self.history=deque()
+    for i in range(0, 240):
+      self.history.append(self.setpoint)
     thread.start_new_thread(self.core_loop, ("core_loop",))      
     return
 
@@ -83,6 +87,8 @@ class core:
     while True:
       t=self.read_temp()
       s=self.read_switch()
+      self.history.popleft()
+      self.history.append(t)
       if (t>self.setpoint+1 and not s and wait==0):
         self.set_switch(True)
       if (t<self.setpoint-1 and s):
