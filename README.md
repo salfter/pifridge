@@ -20,6 +20,9 @@ own.  It uses the w1_gpio bit-bang driver.  Other supported 1-Wire
 interfaces should also work, as this code works with the /sys/bus/w1 file
 hierarchy.
 
+Dependencies
+------------
+
 Note that current releases of Linux don't include support for the DS2406. 
 I've written a driver for it; a patch that should apply to reasonably
 current kernel releases is available:
@@ -28,3 +31,15 @@ https://dl.dropboxusercontent.com/u/57535575/w1_ds2406.patch
 
 Apply the patch to your kernel source tree, make sure CONFIG_W1_SLAVE_DS2406
 is enabled in your config, rebuild, and install.
+
+The web interface uses Flask, so that needs to be installed:
+
+```
+sudo apt-get install python-pip
+sudo pip install flask
+```
+
+Writing to the DS2406 (to switch it on and off) needs root access.  For that
+matter, so does Flask if you want it to run on port 80.  Therefore, pifridge
+will need to run as root.
+

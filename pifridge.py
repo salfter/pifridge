@@ -2,11 +2,29 @@
 
 from core import core
 import time
+from flask import Flask, Response
 
 f=core()
-f.setpoint=82.0
-f.gotopoint=78.0
+f.setpoint=70.0
+f.gotopoint=f.setpoint
 
-while True:
-  print time.strftime("%X")+" "+str(f.read_temp())+" "+str(f.read_switch())+" "+str(f.setpoint)+" "+str(f.gotopoint)
-  time.sleep(5)
+w=Flask(__name__)
+
+@w.route("/curr_temp")
+def get_curr_temp():
+  return Response(str(f.read_temp()), mimetype="text/plain")
+  
+@w.route("/setpoint")
+def get_setpoint():
+  return Response(str(f.setpoint), mimetype="text/plain")
+
+@w.route("/gotopoint")
+def get_gotopoint():
+  return Response(str(f.gotopoint), mimetype="text/plain")
+
+@w.route("/switch")
+def get_switch():
+  return Response(str(f.read_switch()), mimetype="text/plain")
+
+if __name__ == "__main__":
+  w.run(host="0.0.0.0", port=80, debug=True)
