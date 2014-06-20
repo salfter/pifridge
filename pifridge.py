@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import StringIO
+import simplejson as json
 
 f=core()
 f.setpoint=90.0
@@ -23,8 +24,11 @@ def get_chart():
   plt.gcf().set_size_inches(6, 2)
   plt.savefig(imgdata, dpi=50, frameon=None, pad_inches=0, format="png")
   imgdata.seek(0)
-  
   return send_file(imgdata, mimetype="image/png", cache_timeout=0)
+
+@w.route("/history.json")
+def get_history():
+  return Response(json.dumps(list(f.history)), mimetype="application/json")
 
 @w.route("/curr_temp")
 def get_curr_temp():

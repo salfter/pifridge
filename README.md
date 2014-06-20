@@ -32,12 +32,14 @@ https://dl.dropboxusercontent.com/u/57535575/w1_ds2406.patch
 Apply the patch to your kernel source tree, make sure CONFIG_W1_SLAVE_DS2406
 is enabled in your config, rebuild, and install.
 
-The web interface uses Flask, so that needs to be installed:
+The web interface uses Flask, simplejson, and matplotlib, so those need to
+be installed:
 
 ```
-sudo apt-get install python-pip
-sudo pip install flask
+sudo apt-get install python-pip python-simplejson python-matplotlib
+sudo pip install flask 
 ```
+
 
 Writing to the DS2406 (to switch it on and off) needs root access.  For that
 matter, so does Flask if you want it to run on port 80.  Therefore, pifridge
