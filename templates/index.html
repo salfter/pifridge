@@ -25,6 +25,7 @@
 			function UpdateChart()
 			{
 				document.getElementById("chart").src="/chart.png?c="+(c++);
+				document.getElementById("datetime").innerHTML=GetText("/date")+" "+GetText("/time");
 			}
 			
 			function OnLoad()
@@ -53,6 +54,7 @@
 			<td style="width: 150px; vertical-align: middle; text-align: center;">
 			  <form id="frmSettings">
 			  	<button type="button" id="btnSettings" onclick="btnSettings_Clicked();" style="width: 100px; height: 50px;">Settings</button>
+			  	<p id="datetime" style="font-size: 75%" />
 			  </form>
 			</td>
 		</tr></table>

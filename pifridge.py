@@ -2,7 +2,8 @@
 
 from core import core
 import time
-from flask import Flask, Response, render_template, send_file
+from functools import wraps
+from flask import Flask, Response, render_template, send_file, request
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -23,6 +24,7 @@ def get_chart():
   plt.gca().axes.get_xaxis().set_visible(False)
   plt.gcf().set_size_inches(6, 2)
   plt.savefig(imgdata, dpi=50, frameon=None, pad_inches=0, format="png")
+  plt.close()
   imgdata.seek(0)
   return send_file(imgdata, mimetype="image/png", cache_timeout=0)
 
