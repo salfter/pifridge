@@ -50,6 +50,23 @@ def get_chart():
   imgdata.seek(0)
   return send_file(imgdata, mimetype="image/png", cache_timeout=0)
 
+@w.route("/chart.html")
+def get_chart_page():
+  data={}
+  return render_template("chart.html", **data)  
+
+@w.route("/chart_l.png")
+def get_large_chart():
+  imgdata=StringIO.StringIO()
+  plt.plot(f.history, color="blue")
+  plt.axis([0, 239, 30, 90])
+  plt.gca().axes.get_xaxis().set_visible(False)
+  plt.gcf().set_size_inches(6, 4.5)
+  plt.savefig(imgdata, dpi=50, frameon=None, pad_inches=0, format="png")
+  plt.close()
+  imgdata.seek(0)
+  return send_file(imgdata, mimetype="image/png", cache_timeout=0)
+
 @w.route("/history.json")
 def get_history():
   return Response(json.dumps(list(f.history)), mimetype="application/json")
