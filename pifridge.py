@@ -9,12 +9,34 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import StringIO
 import simplejson as json
+import ConfigParser
 
 f=core()
 f.setpoint=90.0
 f.gotopoint=f.setpoint
 
 w=Flask(__name__)
+
+cfg=ConfigParser.ConfigParser()
+cfg.read("pifridge.conf")
+
+def check_auth(username, password):
+  return (username==cfg.get("Authentication", "username") and password==cfg.get("Authentication", "password"))
+  
+def authenticate():
+  return Response(
+  "Valid username and password required.", 401,
+  {"WWW-Authenticate": 'Basic realm="Login Required"'})
+  
+def requires_auth(f):
+  @wraps(f)
+  def decorated(*args, **kwargs):
+    if (request.remote_addr!="127.0.0.1"):
+      auth=request.authorization
+      if (not auth or not check_auth(auth.username, auth.password)):
+        return authenticate()
+      return f(*args, **kwargs)
+  return decorated
 
 @w.route("/chart.png")
 def get_chart():
@@ -73,6 +95,7 @@ def get_time():
   return Response(time.strftime("%H:%M"), mimetype="text/plain")
   
 @w.route("/settings.html")
+@requires_auth
 def get_settings():
   data={}
   return render_template("settings.html", **data)  

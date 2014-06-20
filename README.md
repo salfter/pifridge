@@ -31,7 +31,7 @@ Chromium (in kiosk mode).  The setup looks something like this:
 
  * packages that need to be installed
 ```
-sudo apt-get install ratpoison unclutter chromium
+sudo apt-get install ratpoison unclutter chromium nmap
 ```
 
  * /etc/inittab 
@@ -62,11 +62,27 @@ banish
 exec xset s off
 exec xset -dpms
 exec unclutter -idle 0
+exec /home/pi/start-pifridge.sh
+```
+
+ * /home/pi/start-pifridge.sh
+```
+#!/bin/bash
+if [ "`nmap -oG - -p 80 localhost | grep open`" == "" ]
+then
+  sudo nohup /root/pifridge/pifridge.py 2>&1 >/dev/null &
+fi
+while [ "`nmap -oG - -p 80 localhost | grep open`" == "" ]
+do
+  sleep 1
+done
 exec /usr/bin/chromium --kiosk http://localhost/
 ```
 
 unclutter keeps the mouse pointer hidden most of the time...it only comes up
 when you touch the screen, and then goes away.
+
+nmap is used to verify that pifridge is running before Chromium starts.
 
 Dependencies
 ------------
