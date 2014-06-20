@@ -16,10 +16,11 @@
 			
 			function UpdateTemperature()
 			{
-				document.getElementById("curr_temp").innerHTML=new Number(GetText("/curr_temp")).toPrecision(3);
-				document.getElementById("setpoint").innerHTML=Math.floor(GetText("/setpoint"));
-				document.getElementById("gotopoint").innerHTML=Math.floor(GetText("/gotopoint"));
-				document.getElementById("switch").innerHTML=(GetText("/switch")=="True")?"On":"Off";
+				data=JSON.parse(GetText("/info.json"))
+				document.getElementById("curr_temp").innerHTML=new Number(data.curr_temp).toPrecision(3);
+				document.getElementById("setpoint").innerHTML=Math.floor(data.setpoint);
+				document.getElementById("gotopoint").innerHTML=Math.floor(data.gotopoint);
+				document.getElementById("switch").innerHTML=(data.switch_status==true)?"On":"Off";
 			}
 			
 			function UpdateChart()

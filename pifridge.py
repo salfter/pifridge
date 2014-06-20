@@ -54,6 +54,10 @@ def get_chart():
 def get_history():
   return Response(json.dumps(list(f.history)), mimetype="application/json")
 
+@w.route("/info.json")
+def get_info_json():
+  return Response(json.dumps({"curr_temp": f.read_temp(), "setpoint": f.setpoint, "gotopoint": f.gotopoint, "switch_status": f.read_switch()}), mimetype="application/json")
+
 @w.route("/curr_temp")
 def get_curr_temp():
   return Response(str(f.read_temp()), mimetype="text/plain")
