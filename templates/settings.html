@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<script type="text/javascript">
+			function GetText(url)
+			{
+				r=new XMLHttpRequest();
+				r.open("GET", url, false);
+				r.send(null)
+				if (r.status!==200)
+					throw new Error(r.statusText);
+				return r.responseText;
+			}
+			
+			function btnSetpointDown_Clicked()
+			{
+				document.getElementById("setpoint").innerHTML=Math.floor(GetText("/setpointdown"));
+				document.getElementById("gotopoint").innerHTML=Math.floor(GetText("/gotopoint"));
+			}
+
+			function btnSetpointUp_Clicked()
+			{
+				document.getElementById("setpoint").innerHTML=Math.floor(GetText("/setpointup"));
+				document.getElementById("gotopoint").innerHTML=Math.floor(GetText("/gotopoint"));
+			}
+
+			function btnGotopointDown_Clicked()
+			{
+				document.getElementById("gotopoint").innerHTML=Math.floor(GetText("/gotopointdown"));
+			}
+
+			function btnGotopointUp_Clicked()
+			{
+				document.getElementById("gotopoint").innerHTML=Math.floor(GetText("/gotopointup"));
+			}
+			
+			function btnReturn_Clicked()
+			{
+				window.location.href="/";
+			}
+
+			function OnLoad()
+			{
+				document.getElementById("setpoint").innerHTML=Math.floor(GetText("/setpoint"));
+				document.getElementById("gotopoint").innerHTML=Math.floor(GetText("/gotopoint"));
+			}
+		</script>
+	</head>
+	<body onload="javascript:OnLoad();" style="font-family: sans-serif">
+		<form id="frmSettings">
+			<table style="font-family: sans-serif">
+				<tr>
+					<th style="vertical-align: middle; text-align: right">Setpoint</th>
+					<td><button type="button" id="btnSetpointDown" onclick="btnSetpointDown_Clicked();" style="width: 50px; height: 50px;">-</button></td>
+					<td style="width: 70px; text-align: center;"><span id="setpoint" style="font-weight: bold; font-size: 120%"></span></td>
+					<td><button type="button" id="btnSetpointUp" onclick="btnSetpointUp_Clicked();" style="width: 50px; height: 50px;">+</button></td>
+				</tr>
+				<tr style="height: 20px" />
+				<tr>
+					<th style="vertical-align: middle; text-align: right;">Go-to point</th>
+					<td><button type="button" id="btnGotopointDown" onclick="btnGotopointDown_Clicked();" style="width: 50px; height: 50px;">-</button></td>
+					<td style="width: 70px; text-align: center;"><span id="gotopoint" style="font-weight: bold; font-size: 120%"></span></td>
+					<td><button type="button" id="btnGotopointUp" onclick="btnGotopointUp_Clicked();" style="width: 50px; height: 50px;">+</button></td>
+				</tr>
+				<tr style="height: 20px" />
+				<tr>
+					<td colspan="2" />
+					<td><button type="button" id="btnReturn" onclick="btnReturn_Clicked();" style="width: 70px; height: 50px;">Return</button></td>
+					<td />
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

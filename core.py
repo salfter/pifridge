@@ -12,6 +12,7 @@ class core:
     self.setpoint=55.0
     self.gotopoint=self.setpoint
     self.bus_lock=thread.allocate_lock()
+    self.settings_lock=thread.allocate_lock()
     self.temp_device=glob.glob("/sys/bus/w1/devices/28*")[0]+"/w1_slave"
     self.switch_device=glob.glob("/sys/bus/w1/devices/12*")[0]+"/output"
     self.switch_status=glob.glob("/sys/bus/w1/devices/12*")[0]+"/state"
@@ -22,8 +23,8 @@ class core:
     return
 
   def read_switch(self, switchsel=0):
-    done=False
     with self.bus_lock:
+      done=False
       while (not done):
         try:
           f=open(self.switch_status, "r")
@@ -81,29 +82,60 @@ class core:
       temp=temp/5.0*9.0+32
     return temp
 
+  def setpoint_down(self):
+    sp=0
+    with self.settings_lock:
+      self.setpoint-=1
+      self.gotopoint=self.setpoint
+      sp=self.setpoint
+    return sp
+
+  def setpoint_up(self):
+    sp=0
+    with self.settings_lock:
+      self.setpoint+=1
+      self.gotopoint=self.setpoint
+      sp=self.setpoint
+    return sp
+      
+  def gotopoint_down(self):
+    gp=0
+    with self.settings_lock:
+      self.gotopoint-=1
+      gp=self.gotopoint
+    return gp
+
+  def gotopoint_up(self):
+    gp=0
+    with self.settings_lock:
+      self.gotopoint+=1
+      gp=self.gotopoint
+    return gp
+
   def core_loop(self, thread_name):
     wait=0
     gotocount=60
     while True:
-      t=self.read_temp()
-      s=self.read_switch()
-      self.history.popleft()
-      self.history.append(t)
-      if (t>self.setpoint+1 and not s and wait==0):
-        self.set_switch(True)
-      if (t<self.setpoint-1 and s):
-        self.set_switch(False)
-        wait=5
-      if (wait>0):
-        wait-=1
-      if (self.gotopoint!=self.setpoint):
-        if (gotocount==0):
-          if (self.gotopoint<self.setpoint):
-            self.setpoint-=1
+      with self.settings_lock:
+        t=self.read_temp()
+        s=self.read_switch()
+        self.history.popleft()
+        self.history.append(t)
+        if (t>self.setpoint+1 and s==False and wait==0):
+          self.set_switch(True)
+        if (t<self.setpoint-1 and s==True):
+          self.set_switch(False)
+          wait=6
+        if (wait>0):
+          wait-=1
+        if (self.gotopoint!=self.setpoint):
+          if (gotocount==0):
+            if (self.gotopoint<self.setpoint):
+              self.setpoint-=1
+            else:
+              self.setpoint+=1
+            gotocount=60
           else:
-            self.setpoint+=1
-          gotocount=60
-        else:
-          gotocount-=1
+            gotocount-=1
       time.sleep(60)
       

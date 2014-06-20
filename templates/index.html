@@ -2,6 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<script type="text/javascript">
+			c=0
+			
 			function GetText(url)
 			{
 				r=new XMLHttpRequest();
@@ -14,18 +16,48 @@
 			
 			function UpdateTemperature()
 			{
-				temp=new Number(GetText("/curr_temp")).toPrecision(3);
-				document.getElementById("curr_temp").innerHTML=temp;
+				document.getElementById("curr_temp").innerHTML=new Number(GetText("/curr_temp")).toPrecision(3);
+				document.getElementById("setpoint").innerHTML=Math.floor(GetText("/setpoint"));
+				document.getElementById("gotopoint").innerHTML=Math.floor(GetText("/gotopoint"));
+				document.getElementById("switch").innerHTML=(GetText("/switch")=="True")?"On":"Off";
+			}
+			
+			function UpdateChart()
+			{
+				document.getElementById("chart").src="/chart.png?c="+(c++);
 			}
 			
 			function OnLoad()
 			{
 				UpdateTemperature();
 				window.setInterval(UpdateTemperature, 5000);
+
+				UpdateChart();
+				window.setInterval(UpdateChart, 60000);
+			}
+
+			function btnSettings_Clicked()
+			{
+				window.location.href="/settings.html";
 			}
 		</script>
 	</head>
-	<body onload="javascript:OnLoad();">
-		<p>current temperature: <span id="curr_temp"></span>&deg;F</p>
+	<body onload="javascript:OnLoad();" style="font-family: sans-serif">
+		<table><tr>
+			<td style="width: 150px">
+				current <span id="curr_temp" style="font-weight: bold; font-size: 150%"></span>&deg;F<br />
+				setpoint <span id="setpoint" style="font-weight: bold; font-size: 120%"></span>&deg;F<br />
+				go to  <span id="gotopoint" style="font-weight: bold; font-size: 120%"></span>&deg;F<br />
+				switch <span id="switch" style="font-weight: bold; font-size: 120%"></span>
+			</td>
+			<td style="width: 150px; vertical-align: middle; text-align: center;">
+			  <form id="frmSettings">
+			  	<button type="button" id="btnSettings" onclick="btnSettings_Clicked();" style="width: 100px; height: 50px;">Settings</button>
+			  </form>
+			</td>
+		</tr></table>
+		<div>
+			<img id="chart" width="300px" height="100px" />
+		</div>
 	</body>
 </html>
