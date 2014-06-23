@@ -19,6 +19,7 @@ class core:
     self.history=deque()
     for i in range(0, 240):
       self.history.append(self.setpoint)
+    self.switch_state=self.read_switch()
     thread.start_new_thread(self.core_loop, ("core_loop",))      
     return
 
@@ -54,6 +55,7 @@ class core:
           f=open(self.switch_device, "w")
           f.write(str(st))
           f.close()
+          self.switch_state=new_state
           done=True
         except:
           pass
@@ -118,7 +120,7 @@ class core:
     while True:
       with self.settings_lock:
         t=self.read_temp()
-        s=self.read_switch()
+        s=self.switch_state
         self.history.popleft()
         self.history.append(t)
         if (t>self.setpoint+1 and s==False and wait==0):

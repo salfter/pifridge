@@ -18,7 +18,7 @@ f.gotopoint=f.setpoint
 w=Flask(__name__)
 
 cfg=ConfigParser.ConfigParser()
-cfg.read("pifridge.conf")
+cfg.read("/root/pifridge/pifridge.conf")
 
 def check_auth(username, password):
   return (username==cfg.get("Authentication", "username") and password==cfg.get("Authentication", "password"))
@@ -75,7 +75,7 @@ def get_history():
 
 @w.route("/info.json")
 def get_info_json():
-  return Response(json.dumps({"curr_temp": f.read_temp(), "setpoint": f.setpoint, "gotopoint": f.gotopoint, "switch_status": f.read_switch()}), mimetype="application/json")
+  return Response(json.dumps({"curr_temp": f.read_temp(), "setpoint": f.setpoint, "gotopoint": f.gotopoint, "switch_status": f.switch_state}), mimetype="application/json")
 
 @w.route("/curr_temp")
 def get_curr_temp():
