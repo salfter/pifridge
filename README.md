@@ -76,7 +76,7 @@ while [ "`nmap -oG - -p 80 localhost | grep open`" == "" ]
 do
   sleep 1
 done
-exec /usr/bin/chromium --kiosk http://localhost/
+exec /usr/bin/chromium --incognito --kiosk http://localhost/
 ```
 
 unclutter keeps the mouse pointer hidden most of the time...it only comes up
